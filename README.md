@@ -45,9 +45,11 @@ actions:
     message: "Your garage door is open!"
 ```
 
-To make it work, just save it as a file like `garage-door.yaml`, set your API token, and run it:
+To make it all work, just save it as a file like `garage-door.yaml`, set your API token, and run it:
 
 ```bash
+pip install glcontrol
+vi garage-door.yaml
 export GROUNDLIGHT_API_TOKEN=api_your_token
 glcontrol garage-door.yaml
 ```
