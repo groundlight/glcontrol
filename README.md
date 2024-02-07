@@ -8,52 +8,51 @@ Here's a simple example of a config to send a text message if your garage door i
 ```yaml
 cameras:
   # define cameras using `framegrab` syntax
-  - name: in-garage-rtsp
+  - name: back-alley-rtsp
     type: rtsp
     url: rtsp://admin:admin@192.168.1.55:554
 
 detectors:
-  - name: garage-door
+  - name: dumpster-overflowing
     modality: binary
-    query: "Is the garage door open?"
-    instructions: 
-      - note: "If the image is too dark, answer NO."
+    query: "Is the dumpster overflowing?"
 
 control:
-  - name: garage-door
-    camera: in-garage-rtsp
-    detector: garage-door
+  - name: dumpster-overflowing
+    camera: back-alley-rtsp
+    detector: dumpster-overflowing
     poll:
-        every: 60
+        every: 60 sec
     motion-detection:
         enabled: True
 
 triggers:
-  - action: send-sms
-    control-loop: garage-door
+  - name: text me if the dumpster is too full
+    control-loop: dumpster-overflowing
+    action: send-sms
     condition:
         value: YES
-        trigger-type: on-change
-        debounce:
-            # Alert me at most once per hour
-            min-delay: 3600
+        trigger-type: after-n-seconds
+        delay: 15 min
 
 actions:
   - name: send-sms
     type: sms
     to: 206-555-5555
-    message: "Your garage door is open!"
+    message: "The dumpster is overflowing!"
+    limit:
+        not-more-than: 1 hr
 ```
 
-To make it all work, just save it as a file like `garage-door.yaml`, set your API token, and run it:
+To make it all work, just save it as a file like `dumpster-overflowing.yaml`, set your API token, and run it:
 
 ```bash
 pip install glcontrol
-vi garage-door.yaml
+vi ./dumpster-overflowing.yaml
 export GROUNDLIGHT_API_TOKEN=api_your_token
-glcontrol garage-door.yaml
+glcontrol ./dumpster-overflowing.yaml
 ```
 
 ## Status
 
-Note: this is a work in progress.  Not all features are implemented yet.
+Note: this is a work in progress.  Not all documented features are implemented yet.
