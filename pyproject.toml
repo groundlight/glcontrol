@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "glcontrol"
+version = "0.1.0"
+description = "Control Loop for Groundlight"
+authors = ["Groundlight <info@groundlight.ai>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+groundlight = "^0.13.2"
+framegrab = "^0.4.4"
+
+[tool.poetry.dev-dependencies]
+pytest = "^6.2"
+
+[tool.poetry.packages]
+include = [{ from = "src", package = "hoodliwinks" }]
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
