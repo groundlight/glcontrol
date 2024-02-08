@@ -13,6 +13,7 @@ packages = [
 python = "^3.8"
 groundlight = "^0.13.2"
 framegrab = "^0.4.4"
+typer = "^0.9.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^7.4"
@@ -25,3 +26,7 @@ testpaths = [
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+# This defines the CLI command `glcontrol` and its python entrypoint
+glcontrol = "glcontrol.cli:climain"
