@@ -6,7 +6,6 @@ class ParsingException(ValueError):
     pass
 
 
-
 class Parseable:
     """A mixin for pydantic BaseModel that adds a parse method from a file."""
 

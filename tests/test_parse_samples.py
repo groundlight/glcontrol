@@ -1,11 +1,11 @@
 import os
 
 import glcontrol.cfgtools.base as cfgtools
-from glcontrol.cfgtools.specs import GLControlConfigFile
+from glcontrol.cfgtools.specs import GLControlManifest
 
 
-def _test_parse_spec(fn: str) -> GLControlConfigFile:
-    out = GLControlConfigFile.from_file(fn)
+def _test_parse_spec(fn: str) -> GLControlManifest:
+    out = GLControlManifest.from_file(fn)
     assert out is not None, f"Failed to parse {fn}"
     return out
 
