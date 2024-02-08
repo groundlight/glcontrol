@@ -1,5 +1,4 @@
-# GLControl: Declarative CV control loops with Groundlight
-
+# GLControl: Declarative Visual Automation
 
 GL control lets you create visual control systems simply by writing YAML configuration files.  Then `glcontrol` interprets these files, creates ML detectors in the cloud using Groundlight based on your natural language instructions, uses [`framegrab`](https://github.com/groundlight/framegrab) to capture images from your camera, and then runs a control loop to capture images, analyze them, and respond to the results.
 
