@@ -12,8 +12,8 @@ def _test_parse_spec(fn: str) -> GLControlConfigFile:
 
 def test_parse_good_samples():
     # find the directory we're in
-    dir = os.path.dirname(os.path.realpath(__file__))
-    samples_dir = f"{dir}/good-samples/"
+    basedir = os.path.dirname(os.path.realpath(__file__))
+    samples_dir = f"{basedir}/good-samples/"
     # find the sample files, which are .yaml
     files = [f for f in os.listdir(samples_dir) if f.endswith(".yaml")]
     assert len(files) > 0, f"No sample files found in {samples_dir}"
@@ -23,14 +23,14 @@ def test_parse_good_samples():
 
 def test_parse_bad_samples():
     # find the directory we're in
-    dir = os.path.dirname(os.path.realpath(__file__))
-    samples_dir = f"{dir}/bad-samples/"
+    basedir = os.path.dirname(os.path.realpath(__file__))
+    samples_dir = f"{basedir}/bad-samples/"
     # find the sample files, which are .yaml
     files = [f for f in os.listdir(samples_dir) if f.endswith(".yaml")]
-    assert len(files) > 0, f"No sample files found in {samples_dir}"
+    assert len(files) > 0, f"No bad sample files found in {samples_dir}"
     for f in files:
         try:
             _test_parse_spec(f"{samples_dir}/{f}")
             assert False, f"Expected to fail parsing {f}"
         except cfgtools.ParsingException as e:
-            pass
+            print(f"Successfully failed parsing {f}: {e}")
