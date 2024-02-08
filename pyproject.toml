@@ -15,8 +15,12 @@ groundlight = "^0.13.2"
 framegrab = "^0.4.4"
 
 [tool.poetry.dev-dependencies]
-pytest = "^6.2"
+pytest = "^7.4"
 
+[tool.pytest.ini_options]
+testpaths = [
+    "tests"
+]
 
 [build-system]
 requires = ["poetry-core"]
