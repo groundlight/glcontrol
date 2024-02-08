@@ -1,23 +1,23 @@
 import logging
-import smtplib, ssl
-import cv2
-
+import os
+import smtplib
+import ssl
 from email import encoders
+from email.mime.image import MIMEImage
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from email.mime.image import MIMEImage
 
-from twilio.rest import Client
-from slack_sdk import WebClient
-
+import cv2
 import requests
-import os
+from slack_sdk import WebClient
+from twilio.rest import Client
+
 
 def send_notifications(det_name: str, query: str, label: str, options: dict, image, logger: logging.Logger):
     if "condition" not in options:
         logger.warn("No condition provided")
         return
-    condition = options["condition"].upper() # "PASS" or "FAIL"
+    condition = options["condition"].upper()  # "PASS" or "FAIL"
     if label == "YES":
         label = "PASS"
     elif label == "NO":
@@ -31,7 +31,7 @@ def send_notifications(det_name: str, query: str, label: str, options: dict, ima
     if not ((condition == "PASS" and label == "PASS") or (condition == "FAIL" and label == "FAIL")):
         logger.info("Condition not met")
         return
-    
+
     if "email" in options:
         logger.info("Sending email")
         email_options = options["email"]
@@ -45,9 +45,10 @@ def send_notifications(det_name: str, query: str, label: str, options: dict, ima
         slack_options = options["slack"]
         send_slack(det_name, query, label, slack_options)
 
+
 def send_email(det_name: str, query: str, image, label: str, options: dict):
     subject = f"Your detector [{det_name}] detected an anomaly"
-    body = f"Your detector [{det_name}] returned a \"{label}\" result to the query [{query}].\n\nThe image of the anomaly is attached below."
+    body = f'Your detector [{det_name}] returned a "{label}" result to the query [{query}].\n\nThe image of the anomaly is attached below.'
     sender_email = options["from_email"]
     receiver_email = options["to_email"]
     app_password = options["email_password"]
@@ -67,7 +68,7 @@ def send_email(det_name: str, query: str, image, label: str, options: dict):
     byte_im = im_buf_arr.tobytes()
     part = MIMEImage(byte_im)
 
-    # Encode file in ASCII characters to send by email    
+    # Encode file in ASCII characters to send by email
     encoders.encode_base64(part)
 
     # Add header as key/value pair to attachment part
@@ -87,29 +88,31 @@ def send_email(det_name: str, query: str, image, label: str, options: dict):
         server.login(sender_email, app_password)
         server.sendmail(sender_email, receiver_email, text)
 
+
 def send_sms(det_name: str, query: str, label: str, options: dict):
     account_sid = options["account_sid"]
     auth_token = options["auth_token"]
     client = Client(account_sid, auth_token)
 
-    message = client.messages \
-                    .create(
-                        body=f"Your detector [{det_name}] returned a \"{label}\" result to the query [{query}].",
-                        from_=options["from_number"],
-                        to=options["to_number"]
-                    )
-    
+    message = client.messages.create(
+        body=f'Your detector [{det_name}] returned a "{label}" result to the query [{query}].',
+        from_=options["from_number"],
+        to=options["to_number"],
+    )
+
+
 def send_slack(det_name: str, query: str, label: str, options: dict):
     client = WebClient(token=options["token"])
     response = client.chat_postMessage(
         channel=options["channel_id"],
-        text=f"Your detector [{det_name}] returned a \"{label}\" result to the query [{query}]."
+        text=f'Your detector [{det_name}] returned a "{label}" result to the query [{query}].',
     )
+
 
 def post_to_stacklight(det_name: str, query: str, label: str, options: dict):
     if "ip" not in options:
         return
-    
+
     ip: str = options["ip"]
 
     port = "8080"

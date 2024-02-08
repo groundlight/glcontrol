@@ -3,6 +3,7 @@ import yaml
 
 class RuntimeConfig(dict):
     """Just a dummy class to represent the runtime configuration."""
+
     pass
 
 

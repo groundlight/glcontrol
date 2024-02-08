@@ -5,8 +5,8 @@ import time
 from uuid import uuid4
 
 import cv2
-import groundlight
 import framegrab
+import groundlight
 
 from .notifications import send_notifications
 
@@ -14,20 +14,23 @@ from .notifications import send_notifications
 def frame_to_base64(frame: cv2.UMat) -> str:
     """Saves the cv2 image as a base64 jpeg."""
     #  encode image as jpeg
-    _, jpeg = cv2.imencode('.jpg', frame)
+    _, jpeg = cv2.imencode(".jpg", frame)
     #  encode the image as base64
     jpg_b64 = base64.b64encode(jpeg)
     #  encode to make it a string
-    jpg_as_text = jpg_b64.decode('utf-8')
+    jpg_as_text = jpg_b64.decode("utf-8")
     return jpg_as_text
 
 
-def run_process(idx: int, logger: logging.Logger, detector: dict,
-                notify_queue: multiprocessing.Queue,
-                photo_queue: multiprocessing.Queue,
-                websocket_metadata_queue: multiprocessing.Queue,
-                websocket_cancel_queue: multiprocessing.Queue,
-                ):
+def run_process(
+    idx: int,
+    logger: logging.Logger,
+    detector: dict,
+    notify_queue: multiprocessing.Queue,
+    photo_queue: multiprocessing.Queue,
+    websocket_metadata_queue: multiprocessing.Queue,
+    websocket_cancel_queue: multiprocessing.Queue,
+):
 
     if detector["config"]["imgsrc_idx"] == -1:
         logger.error(f"Detector {detector['id']} has no image source.")
@@ -46,7 +49,9 @@ def run_process(idx: int, logger: logging.Logger, detector: dict,
         if detector["config"]["cycle_time"] < poll_delay:
             poll_delay = detector["config"]["cycle_time"]
         cycle_time = detector["config"]["cycle_time"]
-        motion = framegrab.motion.MotionDetector(detector["config"]["motion_percent"], detector["config"]["motion_threshold"])
+        motion = framegrab.motion.MotionDetector(
+            detector["config"]["motion_percent"], detector["config"]["motion_threshold"]
+        )
     elif trigger_type == "time":
         if detector["config"]["cycle_time"] < poll_delay:
             poll_delay = detector["config"]["cycle_time"]
@@ -59,7 +64,7 @@ def run_process(idx: int, logger: logging.Logger, detector: dict,
         raise ValueError(f"Trigger type [{trigger_type}] not yet supported.")
     else:
         raise ValueError(f"Invalid trigger type: {trigger_type}")
-    
+
     gl = groundlight.Groundlight()
     det = gl.get_detector(detector["id"])
     conf = det.confidence_threshold if det.confidence_threshold is not None else 0.9
@@ -69,7 +74,7 @@ def run_process(idx: int, logger: logging.Logger, detector: dict,
 
     logger.info(f"Starting detector {detector['id']}...")
 
-    while(True):
+    while True:
         try:
             if not notify_queue.full() and not photo_queue.full():
                 notify_queue.put_nowait("fetch")
@@ -89,7 +94,7 @@ def run_process(idx: int, logger: logging.Logger, detector: dict,
                 continue
 
             # send to groundlight
-            query = gl.submit_image_query(det, frame, 0) # default wait is 30s
+            query = gl.submit_image_query(det, frame, 0)  # default wait is 30s
 
             has_cancelled = False
 
@@ -105,13 +110,18 @@ def run_process(idx: int, logger: logging.Logger, detector: dict,
                     "imgsrc_idx": detector["config"]["imgsrc_idx"],
                     "image": frame_to_base64(frame),
                 })
-            
+
             # poll for result until timeout
             while should_continue():
                 query = gl.get_image_query(query.id)
                 if not has_cancelled and (
                     (query.result.confidence is not None and query.result.confidence > conf)
-                    or (query.result.confidence is None and query.result.label is not None and query.result.label != "QUERY_FAIL" )):
+                    or (
+                        query.result.confidence is None
+                        and query.result.label is not None
+                        and query.result.label != "QUERY_FAIL"
+                    )
+                ):
                     if not websocket_cancel_queue.full():
                         websocket_cancel_queue.put_nowait({
                             "cancel": True,
@@ -129,13 +139,20 @@ def run_process(idx: int, logger: logging.Logger, detector: dict,
                         try:
                             logger.info(f"Sending notifications for detector {detector['id']}...")
                             # logger.info(detector["config"]["notifications"])
-                            send_notifications(detector["name"], detector["query"], query.result.label, detector["config"]["notifications"], frame, logger)
+                            send_notifications(
+                                detector["name"],
+                                detector["query"],
+                                query.result.label,
+                                detector["config"]["notifications"],
+                                frame,
+                                logger,
+                            )
                         except Exception as e:
                             logger.error(f"Error sending notifications: {e}")
                 delay()
-            
+
             retry_time = time.time() + cycle_time
-            
+
             if not has_cancelled and not websocket_cancel_queue.full():
                 # Cancel previous query if it hasn't been cancelled yet
                 websocket_cancel_queue.put_nowait({

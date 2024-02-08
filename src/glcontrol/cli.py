@@ -6,7 +6,6 @@ import typer
 
 import glcontrol.conductor as conductor
 
-
 app = typer.Typer()
 
 
@@ -21,8 +20,7 @@ def set_default_config_fn(config_fn: str) -> str:
 
 
 def display_config_if_updated(config_fn: str, last_updated: float) -> float:
-    """Checks if the config file has been updated and if so, prints the new config.
-    """
+    """Checks if the config file has been updated and if so, prints the new config."""
     config_fn = set_default_config_fn(config_fn)
     # check if the file exists
     if not os.path.exists(config_fn):
@@ -33,7 +31,7 @@ def display_config_if_updated(config_fn: str, last_updated: float) -> float:
     if last_updated != os.path.getmtime(config_fn):
         print(f"Runtime config file: {config_fn}")
         # Just print out the raw yaml for now
-        with open(RUNTIME_CONFIG_FN, 'r') as f:
+        with open(RUNTIME_CONFIG_FN, "r") as f:
             print(f.read())
         print(f"<end> of {config_fn}")
 
@@ -41,7 +39,7 @@ def display_config_if_updated(config_fn: str, last_updated: float) -> float:
 
 
 @app.command()
-def watch_config(config:str="", poll_delay:float = 1.0):
+def watch_config(config: str = "", poll_delay: float = 1.0):
     """Watches the runtime config file and prints it to the console when it changes.
     This is useful as a dev tool to see the config changes in real time.
     """
@@ -53,7 +51,7 @@ def watch_config(config:str="", poll_delay:float = 1.0):
 
 
 @app.command()
-def start(config:str = ""):
+def start(config: str = ""):
     """Starts the Groundlight runtime.
     Parses the config YAML and launches all the control loops."""
     config_fn = set_default_config_fn(config)
@@ -68,7 +66,7 @@ def stop():
 
 
 @app.command()
-def parse(config:str = ""):
+def parse(config: str = ""):
     """Parses the config YAML and returns the parsed config."""
     config_fn = set_default_config_fn(config)
     return parse_config_file(config_fn=config_fn)
@@ -78,13 +76,14 @@ def parse(config:str = ""):
 def restart():
     """Restarts the Groundlight runtime.
     Stops all the control loops and then starts them again."""
-    #TODO: Send a signal instead
+    # TODO: Send a signal instead
     conductor.stop_processes()
     conductor.start_processes()
 
 
 def climain():
     app()
+
 
 if __name__ == "__main__":
     climain()
