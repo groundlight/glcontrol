@@ -17,9 +17,8 @@ jobs:
       - name: Run isort to sort dependencies
         uses: isort/isort-action@v1.1.0
         with:
-          sort-paths: "janzu lambdas predictors"
-          # -p indicates a "known first-party" library
-          configuration: "--profile black -p predictors"
+          sort-paths: "src tests"
+          configuration: "--profile black"
         # Run isort before black so that black has the final say in formatting.
       - name: run black to auto-format python code
         uses: psf/black@23.1.0
