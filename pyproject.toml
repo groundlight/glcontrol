@@ -5,6 +5,9 @@ description = "Control Loop for Groundlight"
 authors = ["Groundlight <info@groundlight.ai>"]
 license = "MIT"
 readme = "README.md"
+packages = [
+    { from = "src", include = "glcontrol" }
+]
 
 [tool.poetry.dependencies]
 python = "^3.8"
@@ -14,8 +17,6 @@ framegrab = "^0.4.4"
 [tool.poetry.dev-dependencies]
 pytest = "^6.2"
 
-[tool.poetry.packages]
-include = [{ from = "src", package = "hoodliwinks" }]
 
 [build-system]
 requires = ["poetry-core"]
