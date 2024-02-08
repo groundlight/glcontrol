@@ -67,9 +67,10 @@ def stop():
 
 @app.command()
 def parse(config: str = ""):
-    """Parses the config YAML and returns the parsed config."""
+    """Parses the config YAML and says if it's valid or not.
+    """
     config_fn = set_default_config_fn(config)
-    return parse_config_file(config_fn=config_fn)
+     parse_config_file(config_fn=config_fn)
 
 
 @app.command()
