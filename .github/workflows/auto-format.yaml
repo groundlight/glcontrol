@@ -1,0 +1,54 @@
+name: auto-format
+on: pull_request
+jobs:
+  format:
+    # Check if the PR is not from a fork
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    env:
+      PYTHON_VERSION: "3.11"
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.head_ref }}
+      - uses: actions/setup-python@v2
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - name: Run isort to sort dependencies
+        uses: isort/isort-action@v1.1.0
+        with:
+          sort-paths: "janzu lambdas predictors"
+          # -p indicates a "known first-party" library
+          configuration: "--profile black -p predictors"
+        # Run isort before black so that black has the final say in formatting.
+      - name: run black to auto-format python code
+        uses: psf/black@23.1.0
+        with:
+          # Run in "." so it gets janzu and others
+          src: "."
+          # Running in root means it won't find pyproject.toml so we specify line length here.
+          options: "--verbose --line-length 120"
+      - name: Check for modified files
+        id: git-check
+        run: |
+          if git diff-index --quiet HEAD --; then 
+            echo "modified=false" >> $GITHUB_ENV
+          else 
+            echo "modified=true" >> $GITHUB_ENV
+          fi
+      - name: Push changes
+        if: env.modified == 'true'
+        # We use a fine-grained personal access token to push commits on behalf of the robocoder
+        # bot. We use this instead of the standard GITHUB TOKEN so that github allows the other
+        # tests to run off of the formatting change
+        # (https://chat.openai.com/share/3c04213d-7424-4c35-8522-2ab0ada8d0a6).
+        # The token needs to be rotated every 90 days -- you can rotate it at
+        # https://github.com/settings/personal-access-tokens/1393925 by clicking "Regenerate token"
+        # and then placing it in the ROBOCODER_TOKEN secret in the zuuul repo
+        # (https://github.com/positronix-ai/zuuul/settings/secrets/actions).
+        run: |
+          git config --global user.name 'Auto-format Bot'
+          git config --global user.email 'robocoder@groundlight.ai'
+          git remote set-url origin https://x-access-token:${{ secrets.ROBOCODER_TOKEN }}@github.com/${{ github.repository }}
+          git commit -am "Automatically reformatting code with black and isort"
+          git push
