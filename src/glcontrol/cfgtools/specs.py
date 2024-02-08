@@ -7,8 +7,7 @@ class CameraSpec(BaseModel, Parseable):
     type: str
     url: str
 
-    class Config:
-        extra = "forbid"
+    model_config = {'extra': 'forbid'}
 
 
 class GLControlSpec(BaseModel, Parseable):
