@@ -37,14 +37,6 @@ jobs:
           fi
       - name: Push changes
         if: env.modified == 'true'
-        # We use a fine-grained personal access token to push commits on behalf of the robocoder
-        # bot. We use this instead of the standard GITHUB TOKEN so that github allows the other
-        # tests to run off of the formatting change
-        # (https://chat.openai.com/share/3c04213d-7424-4c35-8522-2ab0ada8d0a6).
-        # The token needs to be rotated every 90 days -- you can rotate it at
-        # https://github.com/settings/personal-access-tokens/1393925 by clicking "Regenerate token"
-        # and then placing it in the ROBOCODER_TOKEN secret in the zuuul repo
-        # (https://github.com/positronix-ai/zuuul/settings/secrets/actions).
         run: |
           git config --global user.name 'Auto-format Bot'
           git config --global user.email 'robocoder@groundlight.ai'
