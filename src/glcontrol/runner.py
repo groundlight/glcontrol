@@ -22,7 +22,7 @@ class SpecRunner():
         for camera in self._spec.cameras:
             print(f"Setting up camera: {camera.name}")
             print(f"  input_type: {camera.input_type}")
-            print(f"  url: {camera.url}")
+            print(f"  id: {camera.id}")
             print(f"  options: {camera.options}")
             camera_d = camera.model_dump()
             grabber = framegrab.FrameGrabber.create_grabber(camera_d)

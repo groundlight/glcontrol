@@ -4,4 +4,5 @@ glcontrol:
     # define cameras using `framegrab` syntax
     - name: back-alley-rtsp
       input_type: rtsp
-      url: rtsp://admin:admin@192.168.1.55:554
+      id:
+        rtsp_url: rtsp://admin:admin@192.168.1.55:554

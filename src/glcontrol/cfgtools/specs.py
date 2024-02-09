@@ -6,7 +6,7 @@ from pydantic import BaseModel
 class CameraSpec(BaseModel, Parseable):
     name: str
     input_type: str
-    url: str = ""
+    id: dict
     options: dict = {}
 
     model_config = {'extra': 'forbid'}
