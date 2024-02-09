@@ -1,16 +1,15 @@
 import logging
 import multiprocessing
 
-import yaml
+from glcontrol.cfgtools.specs import GLControlSpec, GLControlManifest
 
-from .control_loop import run_process
 
 logger = logging.getLogger(__name__)
 
 
 def start_processes(config_fn: str):
-    config = parse_config(config_fn)
-    detectors = list(filter(lambda d: d["config"]["enabled"], config))
+    spec: GLControlSpec = GLControlManifest.from_file(config_fn).glcontrol
+    detectors = list(filter(lambda d: d["config"]["enabled"], spec.detectors))
     if len(detectors) == 0:
         logger.error("No detectors are enabled")
         return
