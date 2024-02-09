@@ -2,6 +2,6 @@ glcontrol:
 
   cameras:
     - name: back-alley-rtsp
-      type: rtsp
+      input_type: rtsp
       url: rtsp://admin:xxxxx@
       invalid-field: "This is not a valid field in a camera spec"

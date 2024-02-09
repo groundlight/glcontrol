@@ -5,7 +5,7 @@ from pydantic import BaseModel
 
 class CameraSpec(BaseModel, Parseable):
     name: str
-    type: str
+    input_type: str
     url: str = ""
     options: dict = {}
 

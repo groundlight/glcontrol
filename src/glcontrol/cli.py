@@ -1,11 +1,12 @@
 #!/usr/bin/env -S poetry run python
 import os
 import time
-from glcontrol.cfgtools.specs import GLControlManifest
 
+from framegrab.cli.clitools import preview_image
+from glcontrol.runner import SpecRunner
 import typer
 
-import glcontrol.conductor as conductor
+from glcontrol.cfgtools.specs import GLControlManifest
 
 
 app = typer.Typer()
@@ -33,7 +34,7 @@ def display_config_if_updated(config_fn: str, last_updated: float) -> float:
     if last_updated != os.path.getmtime(config_fn):
         print(f"Runtime config file: {config_fn}")
         # Just print out the raw yaml for now
-        with open(RUNTIME_CONFIG_FN, "r") as f:
+        with open(config_fn, "r") as f:
             print(f.read())
         print(f"<end> of {config_fn}")
 
@@ -57,31 +58,41 @@ def start(config: str = ""):
     """Starts the Groundlight runtime.
     Parses the config YAML and launches all the control loops."""
     config_fn = set_default_config_fn(config)
-    conductor.start_processes(config_fn=config_fn)
+    raise NotImplementedError("Not yet implemented.")
 
 
 @app.command()
 def stop():
     """Stops the Groundlight runtime.
     Stops all the control loops."""
-    conductor.stop_processes()
+    raise NotImplementedError("Not yet implemented.")
 
 
 @app.command()
-def parse(config: str = ""):
+def parse(config_fn: str = typer.Argument(...)):
     """Parses the config YAML and says if it's valid or not.
     """
-    config_fn = set_default_config_fn(config)
-    config = GLControlManifest.from_file(config_fn)
+    manifest = GLControlManifest.from_file(config_fn)
+    assert manifest
+    print(f"Config file {config_fn} is valid.")
+
+
+@app.command()
+def preview_cameras(config_fn: str = typer.Argument(...)):
+    """Instantiates the cameras and shows a preview of each one.
+    """
+    manifest = GLControlManifest.from_file(config_fn)
+    runner = SpecRunner(manifest.glcontrol)
+    for grabber in runner._grabbers:
+        frame = grabber.grab()
+        preview_image(frame, title=grabber.name)
 
 
 @app.command()
 def restart():
     """Restarts the Groundlight runtime.
     Stops all the control loops and then starts them again."""
-    # TODO: Send a signal instead
-    conductor.stop_processes()
-    conductor.start_processes()
+    raise NotImplementedError("Not yet implemented.")
 
 
 def climain():
