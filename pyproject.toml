@@ -42,3 +42,6 @@ build-backend = "poetry.core.masonry.api"
 [tool.poetry.scripts]
 # This defines the CLI command `glcontrol` and its python entrypoint
 glcontrol = "glcontrol.cli:climain"
+
+[tool.pylint."MESSAGES CONTROL"]
+disable = "W1203, W1514, C0114"

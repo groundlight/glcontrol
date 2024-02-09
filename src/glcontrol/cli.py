@@ -57,7 +57,7 @@ def start(config: str = ""):
     """Starts the Groundlight runtime.
     Parses the config YAML and launches all the control loops."""
     config_fn = set_default_config_fn(config)
-    raise NotImplementedError("Not yet implemented.")
+    raise NotImplementedError(f"Not yet implemented {config_fn}")
 
 
 @app.command()
@@ -80,7 +80,7 @@ def preview_cameras(config_fn: str = typer.Argument(...)):
     """Instantiates the cameras and shows a preview of each one."""
     manifest = GLControlManifest.from_file(config_fn)
     runner = SpecRunner(manifest.glcontrol)
-    for n, grabber in enumerate(runner._grabbers):
+    for n, grabber in enumerate(runner.grabbers):
         frame = grabber.grab()
         preview_image(frame, title=f"camera {n}", output_type="imgcat")
 

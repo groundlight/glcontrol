@@ -31,7 +31,7 @@ class GLControlSpec(BaseModel, Parseable):
     """Pydantic model for the main config files."""
 
     cameras: list[CameraSpec] = []
-    detectors: list = [DetectorSpec]
+    detectors: list[DetectorSpec] = []
     controls: list = []
 
 

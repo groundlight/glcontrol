@@ -55,3 +55,10 @@ glcontrol ./dumpster-overflowing.yaml
 ## Status
 
 Note: this is a work in progress.  Not all documented features are implemented yet.
+
+
+## CLI
+
+You can run `glcontrol` from the command line to start a control loop.  It will read the config file, create detectors, and start the control loop.  Generally you need to supply the name of the config yaml, but you can also set it
+as the `GLCONTROL_CONFIG` environment variable.
+
