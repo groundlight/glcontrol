@@ -7,9 +7,8 @@ from glcontrol.cfgtools.specs import GLControlSpec
 
 logger = logging.getLogger(__name__)
 
-class SpecRunner():
-    """Interprets a GLControlSpec and runs the control loops.
-    """
+class SpecRunner:
+    """Interprets a GLControlSpec and runs the control loops."""
 
     _spec: GLControlSpec
     _grabbers: list[framegrab.FrameGrabber]
@@ -19,8 +18,7 @@ class SpecRunner():
         self._setup_cameras()
 
     def _setup_cameras(self):
-        """Instantiate the cameras using framegrab
-        """
+        """Instantiate the cameras using framegrab"""
         self._grabbers = []
         for camera in self._spec.cameras:
             logger.info(f"Setting up camera: {camera.name}")

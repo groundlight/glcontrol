@@ -1,5 +1,6 @@
 import yaml
 
+
 class ParsingException(ValueError):
     """Raised when the config file is invalid."""
 

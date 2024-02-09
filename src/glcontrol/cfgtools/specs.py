@@ -1,6 +1,8 @@
 from enum import Enum
-from glcontrol.cfgtools.base import Parseable
+
 from pydantic import BaseModel
+
+from glcontrol.cfgtools.base import Parseable
 
 
 class CameraSpec(BaseModel, Parseable):
@@ -9,7 +11,7 @@ class CameraSpec(BaseModel, Parseable):
     id: dict
     options: dict = {}
 
-    model_config = {'extra': 'forbid'}
+    model_config = {"extra": "forbid"}
 
 
 class DetectorModality(str, Enum):
@@ -22,11 +24,12 @@ class DetectorSpec(BaseModel, Parseable):
     query: str
     confidence_threshold: float | None = None
 
-    model_config = {'extra': 'forbid'}
+    model_config = {"extra": "forbid"}
 
 
 class GLControlSpec(BaseModel, Parseable):
     """Pydantic model for the main config files."""
+
     cameras: list[CameraSpec] = []
     detectors: list = [DetectorSpec]
     controls: list = []
@@ -37,4 +40,4 @@ class GLControlManifest(BaseModel, Parseable):
     glcontrol: GLControlSpec
     metadata: dict = {}
 
-    model_config = {'extra': 'forbid'}
+    model_config = {"extra": "forbid"}
