@@ -12,7 +12,7 @@ packages = [
 [tool.poetry.dependencies]
 python = "^3.8"
 groundlight = "^0.13.2"
-framegrab = {git = "https://github.com/groundlight/framegrab", rev = "cli-improvements"}
+framegrab = "^0.4.5"
 typer = "^0.9.0"
 pydantic = "^2.6.1"
 
