@@ -18,4 +18,5 @@ class Parseable:
         try:
             return cls(**raw)
         except Exception as e:
+            # TODO: try to translate the pydantic error into a more user-friendly message
             raise ParsingException(f"Failed to parse {config_fn}: {e}") from e
