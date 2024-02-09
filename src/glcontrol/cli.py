@@ -83,9 +83,9 @@ def preview_cameras(config_fn: str = typer.Argument(...)):
     """
     manifest = GLControlManifest.from_file(config_fn)
     runner = SpecRunner(manifest.glcontrol)
-    for grabber in runner._grabbers:
+    for n, grabber in enumerate(runner._grabbers):
         frame = grabber.grab()
-        preview_image(frame, title=grabber.name)
+        preview_image(frame, title=f"camera {n}", output_type="imgcat")
 
 
 @app.command()

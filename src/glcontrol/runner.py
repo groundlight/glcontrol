@@ -12,7 +12,6 @@ class SpecRunner():
 
     def __init__(self, spec: GLControlSpec):
         self._spec = spec
-
         self._setup_cameras()
 
     def _setup_cameras(self):
