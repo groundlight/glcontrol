@@ -4,8 +4,8 @@ import framegrab
 
 from glcontrol.cfgtools.specs import GLControlSpec
 
-
 logger = logging.getLogger(__name__)
+
 
 class SpecRunner:
     """Interprets a GLControlSpec and runs the control loops."""
