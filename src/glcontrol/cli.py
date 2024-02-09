@@ -2,12 +2,11 @@
 import os
 import time
 
-from framegrab.cli.clitools import preview_image
-from glcontrol.runner import SpecRunner
 import typer
+from framegrab.cli.clitools import preview_image
 
 from glcontrol.cfgtools.specs import GLControlManifest
-
+from glcontrol.runner import SpecRunner
 
 app = typer.Typer()
 
@@ -70,8 +69,7 @@ def stop():
 
 @app.command()
 def parse(config_fn: str = typer.Argument(...)):
-    """Parses the config YAML and says if it's valid or not.
-    """
+    """Parses the config YAML and says if it's valid or not."""
     manifest = GLControlManifest.from_file(config_fn)
     assert manifest
     print(f"Config file {config_fn} is valid.")
@@ -79,8 +77,7 @@ def parse(config_fn: str = typer.Argument(...)):
 
 @app.command()
 def preview_cameras(config_fn: str = typer.Argument(...)):
-    """Instantiates the cameras and shows a preview of each one.
-    """
+    """Instantiates the cameras and shows a preview of each one."""
     manifest = GLControlManifest.from_file(config_fn)
     runner = SpecRunner(manifest.glcontrol)
     for n, grabber in enumerate(runner._grabbers):

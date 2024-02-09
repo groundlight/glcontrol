@@ -1,8 +1,7 @@
 import logging
 import multiprocessing
 
-from glcontrol.cfgtools.specs import GLControlSpec, GLControlManifest
-
+from glcontrol.cfgtools.specs import GLControlManifest, GLControlSpec
 
 logger = logging.getLogger(__name__)
 
