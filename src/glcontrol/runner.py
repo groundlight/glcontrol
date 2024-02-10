@@ -32,7 +32,7 @@ class DetectorRT:
 
     def __repr__(self):
         d_id = self.detector.id if self.detector else "None"
-        return f"DetectorRT("{self.spec.name}"", id={d_id})"
+        return f"DetectorRT('{self.spec.name}', id={d_id})"
 
 
 class SpecRunner:
