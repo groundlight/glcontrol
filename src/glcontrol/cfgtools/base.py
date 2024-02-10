@@ -1,7 +1,7 @@
 import json
 
-from pydantic_core import ValidationError
 import yaml
+from pydantic_core import ValidationError
 
 
 class ParsingException(ValueError):
