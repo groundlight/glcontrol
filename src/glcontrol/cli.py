@@ -1,4 +1,5 @@
 #!/usr/bin/env -S poetry run python
+import logging
 import os
 import time
 
@@ -7,6 +8,9 @@ from framegrab.cli.clitools import preview_image
 
 from glcontrol.cfgtools.specs import GLControlManifest
 from glcontrol.runner import SpecRunner
+
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.DEBUG)  #TODO: make this configurable
 
 app = typer.Typer()
 
@@ -53,11 +57,16 @@ def watch_config(config: str = "", poll_delay: float = 1.0):
 
 
 @app.command()
-def start(config: str = ""):
+def run(config: str = typer.Argument(...)):
     """Starts the Groundlight runtime.
     Parses the config YAML and launches all the control loops."""
     config_fn = set_default_config_fn(config)
-    raise NotImplementedError(f"Not yet implemented {config_fn}")
+    logger.debug(f"Loading config manifest from {config_fn}")
+    manifest = GLControlManifest.from_file(config_fn)
+    logger.debug(f"Loaded manifest: {manifest}")
+    runner = SpecRunner(manifest.glcontrol)
+    logger.debug(f"Launching SpecRunner: {runner}")
+    runner.run_all()
 
 
 @app.command()

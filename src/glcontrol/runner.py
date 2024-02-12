@@ -1,4 +1,5 @@
 import logging
+import time
 from typing import Dict, Type
 
 import framegrab
@@ -97,7 +98,7 @@ class ImageSourceRT:
         """Get a camera by name."""
         return cls.registry[name]
 
-    def frame_grab(self) -> "framegrab.Frame":
+    def grab(self) -> "framegrab.Frame":
         """Grab a frame from the camera."""
         frame = self.grabber.grab()
         return frame
@@ -134,13 +135,15 @@ class ControlLoop(metaclass=ControlLoopRegistry):
     """
 
     registry_name: str = "abstract-base"
+    spec: ControlLoopSpec
+    sdk: Groundlight
 
-    def __init__(self, spec: dict, sdk: Groundlight):
+    def __init__(self, spec: ControlLoopSpec, sdk: Groundlight):
         self.spec = spec
         self.sdk = sdk
 
     def __repr__(self):
-        return f"ControlLoop<type={self.registry_name}, name='{self.spec['name']}'>"
+        return f"ControlLoop<type={self.registry_name}, name='{self.spec.name}'>"
 
     @staticmethod
     def from_spec(spec: ControlLoopSpec, sdk: Groundlight) -> "ControlLoop":
@@ -179,15 +182,19 @@ class SimpleCameraDetectorLoop(ControlLoop):
         super().__init__(spec, sdk)
         self.camera = self._setup_camera()
         self.detector_rt = self._setup_detector()
-        self.poll_delay = parse_time_str(self.spec.get("poll_delay", "60 s"))
+        self.poll_delay = parse_time_str(self.spec.poll_delay)
 
     def run_loop(self):
+        logger.info(f"Starting control loop: {self.spec.name}")
         while True:
             frame = self.camera.grab()
             # TODO: make the `ask_*` type configurable
+            logger.debug(f"Sending frame to detector: {self.detector_rt.detector}")
             result = self.sdk.ask_ml(self.detector_rt.detector, frame)
             logger.debug(f"Got result: {result}")
             self.detector_rt.store_result(result)
+            logger.debug(f"Sleeping for {self.poll_delay} seconds")
+            time.sleep(self.poll_delay)
 
 
 class SpecRunner:
@@ -233,3 +240,14 @@ class SpecRunner:
             new_loop = ControlLoop.from_spec(control, self.sdk)
             out.append(new_loop)
         return out
+
+    def run_all(self):
+        """Run all the control loops."""
+        if len(self.control_loops) == 0:
+            logger.warning("No control loops found.")
+            return
+        if len(self.control_loops) > 1:
+            # We need to implement some threading or something for this.  later.
+            raise NotImplementedError("Only one control loop is supported at this time.")
+        loop = self.control_loops[0]
+        loop.run_loop()

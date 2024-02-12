@@ -32,6 +32,7 @@ class ControlLoopSpec(BaseModel, Parseable):
     type: str
     camera: str
     detector: str
+    poll_delay: str
 
 
 class GLControlSpec(BaseModel, Parseable):
