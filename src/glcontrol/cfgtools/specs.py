@@ -27,12 +27,19 @@ class DetectorSpec(BaseModel, Parseable):
     model_config = {"extra": "forbid"}
 
 
+class ControlLoopSpec(BaseModel, Parseable):
+    name: str
+    type: str
+    camera: str
+    detector: str
+
+
 class GLControlSpec(BaseModel, Parseable):
     """Pydantic model for the main config files."""
 
     cameras: list[CameraSpec] = []
     detectors: list[DetectorSpec] = []
-    controls: list = []
+    controls: list[ControlLoopSpec] = []
 
 
 class GLControlManifest(BaseModel, Parseable):

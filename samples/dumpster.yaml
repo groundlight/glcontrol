@@ -14,6 +14,7 @@ glcontrol:
 
   controls:
     - name: dumpster-overflowing
+      type: simple-camera-detector
       camera: back-alley-rtsp
       detector: dumpster-overflowing
       poll:
