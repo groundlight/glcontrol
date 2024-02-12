@@ -3,6 +3,7 @@ import time
 from typing import Dict, Type
 
 import framegrab
+from framegrab.cli.clitools import preview_image
 from groundlight import Groundlight
 
 from glcontrol.cfgtools.specs import CameraSpec, ControlLoopSpec, DetectorSpec, GLControlSpec
@@ -178,7 +179,7 @@ class ControlLoop(metaclass=ControlLoopRegistry):
 class SimpleCameraDetectorLoop(ControlLoop):
     registry_name = "simple-camera-detector"  # Explicitly defining the registration name
 
-    def __init__(self, spec: dict, sdk: Groundlight):
+    def __init__(self, spec: ControlLoopSpec, sdk: Groundlight):
         super().__init__(spec, sdk)
         self.camera = self._setup_camera()
         self.detector_rt = self._setup_detector()
@@ -188,6 +189,8 @@ class SimpleCameraDetectorLoop(ControlLoop):
         logger.info(f"Starting control loop: {self.spec.name}")
         while True:
             frame = self.camera.grab()
+            if self.spec.log_images:
+                preview_image(frame, title=self.spec.name, output_type=self.spec.log_images)
             # TODO: make the `ask_*` type configurable
             logger.debug(f"Sending frame to detector: {self.detector_rt.detector}")
             result = self.sdk.ask_ml(self.detector_rt.detector, frame)

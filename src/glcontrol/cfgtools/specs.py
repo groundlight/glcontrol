@@ -33,6 +33,7 @@ class ControlLoopSpec(BaseModel, Parseable):
     camera: str
     detector: str
     poll_delay: str
+    log_images: str = ""
 
 
 class GLControlSpec(BaseModel, Parseable):
