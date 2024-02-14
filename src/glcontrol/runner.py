@@ -177,7 +177,7 @@ class ControlLoop(metaclass=ControlLoopRegistry):
 
 
 class SimpleCameraDetectorLoop(ControlLoop):
-    registry_name = "simple-camera-detector"  # Explicitly defining the registration name
+    registry_name = "simple-camera-detector"
 
     def __init__(self, spec: ControlLoopSpec, sdk: Groundlight):
         super().__init__(spec, sdk)

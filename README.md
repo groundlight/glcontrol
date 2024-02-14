@@ -9,7 +9,7 @@ cameras:
   # define cameras using `framegrab` syntax
   - name: back-alley-rtsp
     type: rtsp
-    url: rtsp://admin:admin@192.168.1.55:554
+    url: rtsp://admin:admin@192.168.1.33:554
 
 detectors:
   - name: dumpster-overflowing
@@ -20,8 +20,7 @@ control:
   - name: dumpster-overflowing
     camera: back-alley-rtsp
     detector: dumpster-overflowing
-    poll:
-        every: 60 sec
+    poll_delay: 60 sec
     motion-detection:
         enabled: True
 
@@ -39,8 +38,8 @@ actions:
     type: sms
     to: 206-555-5555
     message: "The dumpster is overflowing!"
-    limit:
-        not-more-than: 1 hr
+    throttle:
+        at_most_every: 1 day
 ```
 
 To make it all work, just save it as a file like `dumpster-overflowing.yaml`, set your API token, and run it:

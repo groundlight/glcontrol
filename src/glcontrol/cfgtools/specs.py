@@ -35,6 +35,11 @@ class ControlLoopSpec(BaseModel, Parseable):
     poll_delay: str
     log_images: str = ""
 
+class ActionSpec(BaseModel, Parseable):
+    name: str
+    type: str
+    args: dict
+
 
 class GLControlSpec(BaseModel, Parseable):
     """Pydantic model for the main config files."""
@@ -42,6 +47,7 @@ class GLControlSpec(BaseModel, Parseable):
     cameras: list[CameraSpec] = []
     detectors: list[DetectorSpec] = []
     controls: list[ControlLoopSpec] = []
+    actions: list[ActionSpec] = []
 
 
 class GLControlManifest(BaseModel, Parseable):
