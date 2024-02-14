@@ -10,7 +10,7 @@ from glcontrol.cfgtools.specs import GLControlManifest
 from glcontrol.runner import SpecRunner
 
 logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.DEBUG)  #TODO: make this configurable
+logging.basicConfig(level=logging.DEBUG)  # TODO: make this configurable
 
 app = typer.Typer()
 
