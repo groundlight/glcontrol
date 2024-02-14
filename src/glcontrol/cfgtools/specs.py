@@ -9,7 +9,7 @@ class CameraSpec(BaseModel, Parseable):
     name: str
     input_type: str
     id: dict
-    options: dict = {}
+    options: dict = Field(default_factory=dict)
 
     model_config = {"extra": "forbid"}
 
