@@ -8,7 +8,7 @@ from framegrab.cli.clitools import preview_image
 from glcontrol.cfgtools.specs import GLControlManifest
 from glcontrol.runner import SpecRunner
 
-app = typer.Typer()
+app = typer.Typer(context_settings={"help_option_names": ["-h", "--help"]})
 
 
 def set_default_config_path(config_path: str) -> str:
