@@ -18,7 +18,6 @@ jobs:
       - uses: chartboost/ruff-action@v1
         with:
           src: ${{ env.CODE_PATHS }}
-          args: --profile black
         # Run ruff before black so that black has the final say in formatting.
       - name: run black to auto-format python code
         uses: psf/black@23.1.0
