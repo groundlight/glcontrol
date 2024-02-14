@@ -4,7 +4,7 @@ import yaml
 from pydantic_core import ValidationError
 
 
-class ParsingException(ValueError):
+class ParsingError(ValueError):
     """Raised when the config file is invalid."""
 
 
@@ -35,4 +35,4 @@ class Parseable:
             return cls(**raw)
         except ValidationError as e:
             msg = "\n".join(pydantic_err_to_friendly(e))
-            raise ParsingException(f"Failed to parse {config_fn}: {msg}") from e
+            raise ParsingError(f"Failed to parse {config_fn}: {msg}") from e

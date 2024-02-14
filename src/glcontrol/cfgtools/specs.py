@@ -1,6 +1,6 @@
 from enum import Enum
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from glcontrol.cfgtools.base import Parseable
 
@@ -9,7 +9,7 @@ class CameraSpec(BaseModel, Parseable):
     name: str
     input_type: str
     id: dict
-    options: dict = {}
+    options: dict = Field(default_factory=dict)
 
     model_config = {"extra": "forbid"}
 

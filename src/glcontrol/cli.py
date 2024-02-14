@@ -10,38 +10,38 @@ from glcontrol.cfgtools.specs import GLControlManifest
 from glcontrol.runner import SpecRunner
 
 logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.DEBUG)  #TODO: make this configurable
+logging.basicConfig(level=logging.DEBUG)  # TODO: make this configurable
 
-app = typer.Typer()
+app = typer.Typer(context_settings={"help_option_names": ["-h", "--help"]})
 
 
-def set_default_config_fn(config_fn: str) -> str:
+def set_default_config_path(config_path: str) -> str:
     """If the config file is not specified, look for a default.
     If no default available, raise an error."""
-    if config_fn:
-        return config_fn
+    if config_path:
+        return config_path
     if "GLCONTROL_CONFIG" in os.environ:
         return os.environ["GLCONTROL_CONFIG"]
     raise ValueError("No config file specified and no default found in environment GLCONTROL_CONFIG.")
 
 
-def display_config_if_updated(config_fn: str, last_updated: float) -> float:
+def display_config_if_updated(config_path: str, last_updated: float) -> float:
     """Checks if the config file has been updated and if so, prints the new config."""
-    config_fn = set_default_config_fn(config_fn)
+    config_path = set_default_config_path(config_path)
     # check if the file exists
-    if not os.path.exists(config_fn):
-        print(f"File not found: {config_fn}")
+    if not os.path.exists(config_path):
+        print(f"File not found: {config_path}")
         return last_updated
 
     # check if the file has been updated
-    if last_updated != os.path.getmtime(config_fn):
-        print(f"Runtime config file: {config_fn}")
+    if last_updated != os.path.getmtime(config_path):
+        print(f"Runtime config file: {config_path}")
         # Just print out the raw yaml for now
-        with open(config_fn, "r") as f:
+        with open(config_path, "r") as f:
             print(f.read())
-        print(f"<end> of {config_fn}")
+        print(f"<end> of {config_path}")
 
-    return os.path.getmtime(config_fn)
+    return os.path.getmtime(config_path)
 
 
 @app.command()
@@ -49,10 +49,10 @@ def watch_config(config: str = "", poll_delay: float = 1.0):
     """Watches the runtime config file and prints it to the console when it changes.
     This is useful as a dev tool to see the config changes in real time.
     """
-    config_fn = set_default_config_fn(config)
+    config_path = set_default_config_path(config)
     last_updated = 0  # set to 0 to force initial display
     while True:
-        last_updated = display_config_if_updated(config_fn, last_updated=last_updated)
+        last_updated = display_config_if_updated(config_path, last_updated=last_updated)
         time.sleep(poll_delay)
 
 
@@ -60,9 +60,9 @@ def watch_config(config: str = "", poll_delay: float = 1.0):
 def run(config: str = typer.Argument(...)):
     """Starts the Groundlight runtime.
     Parses the config YAML and launches all the control loops."""
-    config_fn = set_default_config_fn(config)
-    logger.debug(f"Loading config manifest from {config_fn}")
-    manifest = GLControlManifest.from_file(config_fn)
+    config_path = set_default_config_path(config)
+    logger.debug(f"Loading config manifest from {config_path}")
+    manifest = GLControlManifest.from_file(config_path)
     logger.debug(f"Loaded manifest: {manifest}")
     runner = SpecRunner(manifest.glcontrol)
     logger.debug(f"Launching SpecRunner: {runner}")
@@ -77,17 +77,17 @@ def stop():
 
 
 @app.command()
-def parse(config_fn: str = typer.Argument(...)):
+def parse(config_path: str = typer.Argument(...)):
     """Parses the config YAML and says if it's valid or not."""
-    manifest = GLControlManifest.from_file(config_fn)
+    manifest = GLControlManifest.from_file(config_path)
     assert manifest
-    print(f"Config file {config_fn} is valid.")
+    print(f"Config file {config_path} is valid.")
 
 
 @app.command()
-def preview_cameras(config_fn: str = typer.Argument(...)):
+def preview_cameras(config_path: str = typer.Argument(...)):
     """Instantiates the cameras and shows a preview of each one."""
-    manifest = GLControlManifest.from_file(config_fn)
+    manifest = GLControlManifest.from_file(config_path)
     runner = SpecRunner(manifest.glcontrol)
     for n, grabber in enumerate(runner.grabbers):
         frame = grabber.grab()
