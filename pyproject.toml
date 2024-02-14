@@ -5,18 +5,49 @@ description = "Control Loop for Groundlight"
 authors = ["Groundlight <info@groundlight.ai>"]
 license = "MIT"
 readme = "README.md"
+packages = [
+    { from = "src", include = "glcontrol" }
+]
 
 [tool.poetry.dependencies]
 python = "^3.8"
 groundlight = "^0.13.2"
-framegrab = "^0.4.4"
+framegrab = "^0.4.5"
+typer = "^0.9.0"
+pydantic = "^2.6.1"
 
 [tool.poetry.dev-dependencies]
-pytest = "^6.2"
+pytest = "^7.4"
+black = "^22.12.0"
+ruff = "^0.2.1"
 
-[tool.poetry.packages]
-include = [{ from = "src", package = "hoodliwinks" }]
+[tool.pytest.ini_options]
+testpaths = [
+    "tests"
+]
+
+[tool.black]
+line-length = 120
+preview = true
+target-version = ["py311"]
+
+[tool.isort]
+line_length = 120
+profile = "black"
+
+[tool.ruff]
+exclude = ["__init__.py"]
+line-length = 120
+select = ["E", "F", "I", "N", "PL", "UP"] # https://beta.ruff.rs/docs/rules/
+target-version = "py311"
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+# This defines the CLI command `glcontrol` and its python entrypoint
+glcontrol = "glcontrol.cli:climain"
+
+[tool.pylint."MESSAGES CONTROL"]
+disable = "W1203, W1514, C0114"

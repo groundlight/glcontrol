@@ -1,0 +1,5 @@
+glcontrol: 
+
+  cameras:
+    - name: back-alley-rtsp
+      # nothing but name - incomplete.

@@ -1,0 +1,39 @@
+name: Run pytest
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  run-pytest:
+
+    runs-on: ubuntu-latest
+    env:
+      PYTHON_VERSION: "3.11"
+      POETRY_VERSION: "1.7.1"
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+
+    - name: install poetry
+      uses: snok/install-poetry@v1
+      with:
+        version: ${{ env.POETRY_VERSION }}
+
+    - name: Install poetry dependencies
+      run: poetry install
+
+    - name: Run pytest
+      run: poetry run pytest
