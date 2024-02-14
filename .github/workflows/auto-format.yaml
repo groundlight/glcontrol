@@ -7,6 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       PYTHON_VERSION: "3.11"
+      CODE_PATHS: "src tests"
     steps:
       - uses: actions/checkout@v3
         with:
@@ -17,15 +18,13 @@ jobs:
       - name: Run isort to sort dependencies
         uses: isort/isort-action@v1.1.0
         with:
-          sort-paths: "src tests"
+          sort-paths: ${{ env.CODE_PATHS }}
           configuration: "--profile black"
         # Run isort before black so that black has the final say in formatting.
       - name: run black to auto-format python code
         uses: psf/black@23.1.0
         with:
-          # Run in "." so it gets janzu and others
-          src: "."
-          # Running in root means it won't find pyproject.toml so we specify line length here.
+          src: ${{ env.CODE_PATHS }}
           options: "--verbose --line-length 120"
       - name: Check for modified files
         id: git-check

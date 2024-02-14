@@ -32,5 +32,5 @@ def test_parse_bad_samples():
         try:
             _test_parse_spec(f"{samples_dir}/{f}")
             assert False, f"Expected to fail parsing {f}"
-        except cfgtools.ParsingException as e:
+        except cfgtools.ParsingError as e:
             print(f"Successfully failed parsing {f}: {e}")
