@@ -80,6 +80,7 @@ class DetectorRT:
         """Store the result in the detector."""
         self._last_result = result
 
+
 class ImageSourceRT:
     """Interprets a CameraSpec and creates it using framegrab.
     This class also stores a registry of all the cameras by name.
