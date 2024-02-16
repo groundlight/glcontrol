@@ -18,20 +18,27 @@ detectors:
 
 loops:
   - name: dumpster-overflowing
-    camera: back-alley-rtsp
-    detector: dumpster-overflowing
+    inputs:
+      - camera: back-alley-rtsp
+        motion_detection: enabled
+    process:
+      - detector: is-dumpster-overflowing
     run_every: 60 sec
-    motion_detection:
-        enabled: True
+  - name: text if full
+    input:
+      - detector: is-dumpster-overflowing
+    process:
+      - python: |
+          if detector.value == "YES":
+              state.cnt += 1
+          else:
+              state.cnt = 0
+          if state.cnt > 5:
+              action("send-sms")
 
-logics:
-  - name: text me if the dumpster is too full
-    trigger:
-      loop: dumpster-overflowing
-      value: YES
-      require_consecutive: 5
-    action: send-sms
-
+        initial_state:
+          cnt: 0
+        
 actions:
   - name: send-sms
     type: sms
