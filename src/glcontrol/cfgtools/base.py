@@ -28,7 +28,7 @@ def substitute_variables(raw_str: str, filename: str) -> str:
     """Substitutes environment variables in the raw string.
     Looks for patterns like {{VARNAME}} and replaces it with the value of the environment variable VARNAME.
     """
-    pattern = re.compile(r'\{\{(\w+)\}\}')  # Matches {{VARNAME}}
+    pattern = re.compile(r"\{\{(\w+)\}\}")  # Matches {{VARNAME}}
     result = raw_str
     matches = pattern.findall(raw_str)
     for match in matches:
@@ -40,8 +40,6 @@ def substitute_variables(raw_str: str, filename: str) -> str:
         else:
             raise ValueError(f"Missing environment variable {var_name} which is referenced in {filename}")
     return result
-    
-
 
 
 class Parseable:

@@ -35,4 +35,3 @@ def test_parse_bad_samples():
             assert False, f"Expected to fail parsing {f}, but instead got a valid {out}"
         except cfgtools.ParsingError as e:
             print(f"Successfully failed parsing {f}: {e}")
-
