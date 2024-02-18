@@ -42,7 +42,7 @@ class ControlLoopSpec(BaseModel, Parseable):
 class GLControlSpec(BaseModel, Parseable):
     """Pydantic model for the main config files."""
 
-    image_sources: list[CameraSpec] = []
+    cameras: list[CameraSpec] = []
     detectors: list[DetectorSpec] = []
     processors: list[ControlLoopSpec] = []
 
