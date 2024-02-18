@@ -18,10 +18,14 @@ def sdk_connect() -> Groundlight:
     return Groundlight()
 
 
-def parse_time_str(time_str: str) -> float:
+def parse_time_str(time_str: str = None, default: float = 60.0) -> float:
     """Parse a time string like '1 min' or '30 sec' into seconds.
     If it's just a raw number, it will be interpreted as seconds.
+    If `time_str` is not provided, returns the value specified by `default`.
     """
+    if not time_str:
+        return default
+
     # Check for just seconds first
     try:
         return float(time_str)
@@ -98,6 +102,7 @@ class ImageSourceRT:
     @classmethod
     def by_name(cls, name: str) -> "ImageSourceRT":
         """Get a camera by name."""
+        print(f"looking up {name} in {cls}")
         return cls.registry[name]
 
     def grab(self) -> "framegrab.Frame":
@@ -168,13 +173,19 @@ class ControlLoop(metaclass=ControlLoopRegistry):
         """
         Looks up the image source named in the spec.
         """
-        return ImageSourceRT.by_name(self.spec.camera)
+        if len(self.spec.inputs) != 1:
+            raise NotImplementedError("Multiple cameras setup is not yet implemented.")
+        input_spec = self.spec.inputs[0]
+        if "camera" in input_spec:
+            return ImageSourceRT.by_name(input_spec["camera"])
+        else:
+            raise NotImplementedError("Can't make camera from input spec: {input_spec}")
 
     def _setup_detector(self) -> DetectorRT:
         """
         Looks up the detector named in the spec.
         """
-        return DetectorRT.by_name(self.spec.detector)
+        return DetectorRT.by_name(self.spec.options["detector"])
 
 
 class SimpleCameraDetectorLoop(ControlLoop):
@@ -184,14 +195,14 @@ class SimpleCameraDetectorLoop(ControlLoop):
         super().__init__(spec, sdk)
         self.camera = self._setup_camera()
         self.detector_rt = self._setup_detector()
-        self.poll_delay = parse_time_str(self.spec.poll_delay)
+        self.poll_delay = parse_time_str(self.spec.options["poll_delay"], default=60)
 
     def run_loop(self):
         logger.info(f"Starting control loop: {self.spec.name}")
         while True:
             frame = self.camera.grab()
-            if self.spec.log_images:
-                preview_image(frame, title=self.spec.name, output_type=self.spec.log_images)
+            if self.spec.options["log_images"]:
+                preview_image(frame, title=self.spec.name, output_type=self.spec.options["log_images"])
             # TODO: make the `ask_*` type configurable
             logger.debug(f"Sending frame to detector: {self.detector_rt.detector}")
             result = self.sdk.ask_ml(self.detector_rt.detector, frame)
@@ -239,7 +250,7 @@ class SpecRunner:
     def _setup_control_loops(self) -> list[ControlLoop]:
         """Instantiate the control loops using the spec."""
         out = []
-        for control in self.spec.controls:
+        for control in self.spec.processors:
             logger.info(f"Setting up control loop: {control.name}")
             new_loop = ControlLoop.from_spec(control, self.sdk)
             out.append(new_loop)
