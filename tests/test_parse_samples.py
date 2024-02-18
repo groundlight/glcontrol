@@ -30,6 +30,7 @@ def test_parse_bad_samples():
     assert len(files) > 0, f"No bad sample files found in {samples_dir}"
     for f in files:
         try:
+            import pdb; pdb.set_trace()
             _test_parse_spec(f"{samples_dir}/{f}")
             assert False, f"Expected to fail parsing {f}"
         except cfgtools.ParsingError as e:

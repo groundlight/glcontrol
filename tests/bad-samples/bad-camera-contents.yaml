@@ -1,6 +1,6 @@
 glcontrol: 
 
-  cameras:
+  input_sources:
     - name: back-alley-rtsp
       input_type: rtsp
       id:
