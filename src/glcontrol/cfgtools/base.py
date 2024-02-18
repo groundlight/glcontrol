@@ -38,4 +38,3 @@ class Parseable:
             raise ParsingError(f"Failed to parse {config_fn}: {msg}") from e
         except Exception as e:
             raise ParsingError(f"Failed to parse {config_fn}: {e}") from e
-

@@ -18,6 +18,7 @@ class DetectorModality(str, Enum):
     """Defines the options available for the modality of a detector.
     Currently this is only binary.
     """
+
     binary = "binary"
 
 
@@ -30,7 +31,7 @@ class DetectorSpec(BaseModel, Parseable):
     model_config = {"extra": "forbid"}
 
 
-#TODO: change the name to reflect the new term "processors"
+# TODO: change the name to reflect the new term "processors"
 # or whatever we settle on.
 class ControlLoopSpec(BaseModel, Parseable):
     name: str
