@@ -2,50 +2,30 @@
 
 GL control lets you create visual control systems simply by writing YAML configuration files.  Then `glcontrol` interprets these files, creates ML detectors in the cloud using Groundlight based on your natural language instructions, uses [`framegrab`](https://github.com/groundlight/framegrab) to capture images from your camera, and then runs a control loop to capture images, analyze them, and respond to the results.
 
-Here's a simple example of a config to send a text message if your garage door is open:
+Here's a simple example of a config to send a text message if the dumpster is over-filled:
     
 ```yaml
-cameras:
-  # define cameras using `framegrab` syntax
-  - name: back-alley-rtsp
-    type: rtsp
-    url: rtsp://admin:admin@192.168.1.33:554
+glcontrol:
+  cameras:
+    # define cameras using `framegrab` syntax
+    - name: back-alley-rtsp
+      type: rtsp
+      url: rtsp://admin:admin@192.168.1.33:554
 
-detectors:
-  - name: dumpster-overflowing
-    modality: binary
-    query: "Is the dumpster overflowing?"
+  detectors:
+    - name: dumpster-overflowing
+      modality: binary
+      query: "Is the dumpster overflowing?"
 
-loops:
-  - name: dumpster-overflowing
-    inputs:
-      - camera: back-alley-rtsp
+  processors:
+    - name: dumpster-overflowing
+      type: simple-camera-detector
+      inputs:
+        - camera: back-alley-rtsp
+      options:
         motion_detection: enabled
-    process:
-      - detector: is-dumpster-overflowing
-    run_every: 60 sec
-  - name: text if full
-    input:
-      - detector: is-dumpster-overflowing
-    process:
-      - python: |
-          if detector.value == "YES":
-              state.cnt += 1
-          else:
-              state.cnt = 0
-          if state.cnt > 5:
-              action("send-sms")
-
-        initial_state:
-          cnt: 0
-        
-actions:
-  - name: send-sms
-    type: sms
-    to: 206-555-5555
-    message: "The dumpster is overflowing!"
-    throttle:
-        at_most_every: 1 day
+        poll: every 60 sec
+        detector: is-dumpster-overflowing
 ```
 
 To make it all work, just save it as a file like `dumpster-overflowing.yaml`, set your API token, and run it:

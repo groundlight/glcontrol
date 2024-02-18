@@ -10,7 +10,8 @@ def _test_parse_spec(fn: str) -> GLControlManifest:
     return out
 
 
-def test_parse_good_samples():
+def test_parse_good_samples(monkeypatch):
+    monkeypatch.setenv("RTSP_PASSWORD", "secret")
     # find the directory we're in
     basedir = os.path.dirname(os.path.realpath(__file__))
     samples_dir = f"{basedir}/good-samples/"
@@ -34,3 +35,4 @@ def test_parse_bad_samples():
             assert False, f"Expected to fail parsing {f}, but instead got a valid {out}"
         except cfgtools.ParsingError as e:
             print(f"Successfully failed parsing {f}: {e}")
+
