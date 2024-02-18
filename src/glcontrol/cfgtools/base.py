@@ -24,7 +24,7 @@ def pydantic_err_to_friendly(err: ValidationError) -> list[str]:
     return msgs
 
 
-def substitute_variables(raw_str: str, filename: str="(unknown)") -> str:
+def substitute_variables(raw_str: str, filename: str = "(unknown)") -> str:
     """Substitutes environment variables in the raw string.
     Looks for patterns like {{VARNAME}} and replaces it with the value of the environment variable VARNAME.
     """

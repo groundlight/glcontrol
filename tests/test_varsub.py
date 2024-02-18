@@ -17,7 +17,7 @@ def test_substitute_variables_with_existing_env_var(monkeypatch):
     assert result == "Value is 12345"
 
 
-#TODO: This test should work but isn't
+# TODO: This test should work but isn't
 @pytest.mark.skip(reason="This test should work but isn't")
 def test_substitute_variables_with_non_existing_env_var():
     # Setup: Use a variable name that is not set in the environment
