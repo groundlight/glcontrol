@@ -181,6 +181,19 @@ class ControlLoop(metaclass=ControlLoopRegistry):
         else:
             raise NotImplementedError("Can't make camera from input spec: {input_spec}")
 
+    def _setup_cameras(self) -> list[ImageSourceRT]:
+        """
+        Looks for a list of cameras in the spec and sets them up.
+        """
+        input_spec = self.spec.inputs
+        cameras = []
+        for entry in input_spec:
+            if "camera" in entry:
+                cameras.append(ImageSourceRT.by_name(entry["camera"]))
+            else:
+                raise NotImplementedError("Can't make cameras from input spec: {input_spec}")
+        return cameras
+
     def _setup_detector(self) -> DetectorRT:
         """
         Looks up the detector named in the spec.
