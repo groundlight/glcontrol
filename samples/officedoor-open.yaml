@@ -1,0 +1,24 @@
+glcontrol: 
+
+  cameras:
+    - name: front-door
+      input_type: rtsp
+      id:
+        rtsp_url: rtsp://admin:{{RTSP_PASSWORD}}@10.44.2.95:554
+
+  detectors:
+    - name: is door open
+      query: "Is the door open?"
+      confidence_threshold: 0.8
+
+  processors:
+    - name: slack if door left open at night.
+      inputs:
+        - camera: front-door
+      type: simple-camera-detector
+      options: 
+        detector: is door open
+        poll_delay: 10 sec
+        log_images: imgcat
+        motion-detection:
+          enabled: True

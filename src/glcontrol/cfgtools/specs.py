@@ -15,6 +15,10 @@ class CameraSpec(BaseModel, Parseable):
 
 
 class DetectorModality(str, Enum):
+    """Defines the options available for the modality of a detector.
+    Currently this is only binary.
+    """
+
     binary = "binary"
 
 
@@ -27,12 +31,23 @@ class DetectorSpec(BaseModel, Parseable):
     model_config = {"extra": "forbid"}
 
 
+# TODO: change the name to reflect the new term "processors"
+# or whatever we settle on.
+class ControlLoopSpec(BaseModel, Parseable):
+    name: str
+    inputs: list
+    type: str
+    options: dict = Field(default_factory=dict)
+
+
 class GLControlSpec(BaseModel, Parseable):
     """Pydantic model for the main config files."""
 
     cameras: list[CameraSpec] = []
     detectors: list[DetectorSpec] = []
-    controls: list = []
+    processors: list[ControlLoopSpec] = []
+
+    model_config = {"extra": "forbid"}
 
 
 class GLControlManifest(BaseModel, Parseable):

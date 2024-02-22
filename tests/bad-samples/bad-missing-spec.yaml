@@ -1,5 +1,5 @@
 # This should fail because it's not under the glcontrol node
-cameras:
+input_sources:
 # define cameras using `framegrab` syntax
 - name: back-alley-rtsp
   input_type: rtsp
