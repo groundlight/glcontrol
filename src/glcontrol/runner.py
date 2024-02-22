@@ -1,5 +1,6 @@
 import logging
 import time
+import threading
 from typing import Dict, Type
 
 import framegrab
@@ -275,7 +276,13 @@ class SpecRunner:
             logger.warning("No control loops found.")
             return
         if len(self.control_loops) > 1:
-            # We need to implement some threading or something for this.  later.
-            raise NotImplementedError("Only one control loop is supported at this time.")
+            threads = []
+            for loop in self.control_loops:
+                t = threading.Thread(target=loop.run_loop)
+                threads.append(t)
+                t.start()
+            for t in threads:
+                t.join()
+            # Since some threads should be on loop, we won't ever get here. We may want to handle threads as true daemons where appropriate
         loop = self.control_loops[0]
         loop.run_loop()
