@@ -1,4 +1,5 @@
 import logging
+import threading
 import time
 from typing import Dict, Type
 
@@ -181,6 +182,19 @@ class ControlLoop(metaclass=ControlLoopRegistry):
         else:
             raise NotImplementedError("Can't make camera from input spec: {input_spec}")
 
+    def _setup_cameras(self) -> list[ImageSourceRT]:
+        """
+        Looks for a list of cameras in the spec and sets them up.
+        """
+        input_spec = self.spec.inputs
+        cameras = []
+        for entry in input_spec:
+            if "camera" in entry:
+                cameras.append(ImageSourceRT.by_name(entry["camera"]))
+            else:
+                raise NotImplementedError("Can't make cameras from input spec: {input_spec}")
+        return cameras
+
     def _setup_detector(self) -> DetectorRT:
         """
         Looks up the detector named in the spec.
@@ -262,7 +276,13 @@ class SpecRunner:
             logger.warning("No control loops found.")
             return
         if len(self.control_loops) > 1:
-            # We need to implement some threading or something for this.  later.
-            raise NotImplementedError("Only one control loop is supported at this time.")
+            threads = []
+            for loop in self.control_loops:
+                t = threading.Thread(target=loop.run_loop)
+                threads.append(t)
+                t.start()
+            for t in threads:
+                t.join()
+            # Since some threads should be on loop, we won't ever get here. We may want to handle threads as true daemons where appropriate
         loop = self.control_loops[0]
         loop.run_loop()
