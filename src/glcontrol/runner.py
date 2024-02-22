@@ -1,6 +1,6 @@
 import logging
-import time
 import threading
+import time
 from typing import Dict, Type
 
 import framegrab
