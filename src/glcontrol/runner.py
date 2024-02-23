@@ -270,21 +270,15 @@ class SpecRunner:
             out.append(new_loop)
         return out
 
-    def run_all(self):
+    def run_all(self) -> list[threading.Thread]:
         """Run all the control loops."""
         if len(self.control_loops) == 0:
             logger.warning("No control loops found.")
-            return
-        elif len(self.control_loops) == 1:
-            loop = self.control_loops[0]
-            loop.run_loop()
-            return
-        else:  # len(self.control_loops) > 1:
+            return []
+        else:
             threads = []
             for loop in self.control_loops:
                 t = threading.Thread(target=loop.run_loop)
                 threads.append(t)
                 t.start()
-            for t in threads:
-                t.join()
-            # Since some threads should be on loop, we won't ever get here. We may want to handle threads as true daemons where appropriate
+        return threads
