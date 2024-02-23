@@ -279,7 +279,7 @@ class SpecRunner:
             loop = self.control_loops[0]
             loop.run_loop()
             return
-        else: # len(self.control_loops) > 1:
+        else:  # len(self.control_loops) > 1:
             threads = []
             for loop in self.control_loops:
                 t = threading.Thread(target=loop.run_loop)
