@@ -170,6 +170,12 @@ class ControlLoop(metaclass=ControlLoopRegistry):
         """
         raise NotImplementedError("ControlLoop subclasses must implement run_loop")
 
+    def stop_loop(self):
+        """
+        Stop the loop.
+        """
+        raise NotImplementedError("ControlLoop subclasses can implement stop_loop")
+
     def _setup_camera(self) -> ImageSourceRT:
         """
         Looks up the image source named in the spec.
@@ -270,21 +276,18 @@ class SpecRunner:
             out.append(new_loop)
         return out
 
-    def run_all(self):
-        """Run all the control loops."""
+    def run_all(self) -> None:
+        """Run all the control loops and return"""
         if len(self.control_loops) == 0:
             logger.warning("No control loops found.")
-            return
-        elif len(self.control_loops) == 1:
-            loop = self.control_loops[0]
-            loop.run_loop()
-            return
-        else:  # len(self.control_loops) > 1:
+        else:
             threads = []
             for loop in self.control_loops:
                 t = threading.Thread(target=loop.run_loop)
                 threads.append(t)
                 t.start()
-            for t in threads:
-                t.join()
-            # Since some threads should be on loop, we won't ever get here. We may want to handle threads as true daemons where appropriate
+
+    def stop_all(self) -> None:
+        """Stop all the control loops."""
+        for loop in self.control_loops:
+            loop.stop_loop()
