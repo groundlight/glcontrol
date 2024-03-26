@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "glcontrol"
-version = "0.1.0"
+version = "0.1.2"
 description = "Control Loop for Groundlight"
 authors = ["Groundlight <info@groundlight.ai>"]
 license = "MIT"
